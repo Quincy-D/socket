@@ -9,7 +9,7 @@
 #include <netinet/in.h>
 #include <sys/socket.h>
 #include <pthread.h>
-#define SERVPORT 80
+#define SERVPORT 8080
 #define MAXDATASIZE 100
 
 void main(int argc,char *argv[]){
@@ -43,7 +43,7 @@ void main(int argc,char *argv[]){
 	/*设置sockaddr_in 结构体中相关参数*/
 	serv_addr.sin_family=AF_INET;
 	serv_addr.sin_port=htons(SERVPORT);
-	serv_addr.sin_addr=127.0.0.1;//*((struct in_addr *)host->h_addr);
+	serv_addr.sin_addr.s_addr=inet_addr("192.168.1.115");//*((struct in_addr *)host->h_addr);
 	bzero(&(serv_addr.sin_zero),8);
 	/*调用connect函数主动发起对服务器端的连接*/
 	if(connect(sockfd,(struct sockaddr *)&serv_addr,\
@@ -56,11 +56,14 @@ void main(int argc,char *argv[]){
 		perror("send");
 		exit(1);
 	}
-	while(1){
-		recv(sockfd, buf, 3, 0);
-		printf("%d\n", buf[0]);
+	sleep(10);
+	//while(1){
+		read(sockfd, buf, sizeof(buf));
+		//recv(sockfd, buf, sizeof(buf), 0);
+		printf("receive data : %c\n", buf[0]);
 		fflush(stdout);
-	}
+	//}
+	printf("the process will exit \n");
 	close(sockfd);
 	pthread_exit(0);
 }
